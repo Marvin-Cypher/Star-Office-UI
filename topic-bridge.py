@@ -549,7 +549,7 @@ def auto_discover_topics():
             "show": True,
             "avatar": avatar,
         }
-        avatar = (avatar % 6) + 1  # cycle 1-6
+        avatar = (avatar % 10) + 1  # cycle 1-10
     return cfg
 
 
@@ -564,7 +564,7 @@ def merge_new_threads(topics_cfg):
             a = info.get("avatar", 0)
             if a > max_avatar:
                 max_avatar = a
-    avatar = (max_avatar % 6) + 1
+    avatar = (max_avatar % 10) + 1
 
     for tid, meta in threads.items():
         if tid in topics_cfg:
@@ -579,7 +579,7 @@ def merge_new_threads(topics_cfg):
             "show": True,
             "avatar": avatar,
         }
-        avatar = (avatar % 6) + 1
+        avatar = (avatar % 10) + 1
         added += 1
     if added:
         save_topics_config(topics_cfg)
