@@ -66,11 +66,11 @@ async function loadMemo() {
       memoDate.textContent = data.date || '';
       memoContent.innerHTML = data.memo.replace(/\n/g, '<br>');
     } else {
-      memoContent.innerHTML = '<div id="memo-placeholder">暂无昨日日记</div>';
+      memoContent.innerHTML = '<div id="memo-placeholder">No memo from yesterday</div>';
     }
   } catch (e) {
-    console.error('加载 memo 失败:', e);
-    memoContent.innerHTML = '<div id="memo-placeholder">加载失败</div>';
+    console.error('Failed to load memo:', e);
+    memoContent.innerHTML = '<div id="memo-placeholder">Failed to load</div>';
   }
 }
 
@@ -82,7 +82,7 @@ function updateLoadingProgress() {
     loadingProgressBar.style.width = percent + '%';
   }
   if (loadingText) {
-    loadingText.textContent = `正在加载 Star 的像素办公室... ${percent}%`;
+    loadingText.textContent = `Loading Clawdi's Pixel Office... ${percent}%`;
   }
 }
 
@@ -100,90 +100,90 @@ function hideLoadingOverlay() {
 }
 
 const STATES = {
-  idle: { name: '待命', area: 'breakroom' },
-  writing: { name: '整理文档', area: 'writing' },
-  researching: { name: '搜索信息', area: 'researching' },
-  executing: { name: '执行任务', area: 'writing' },
-  syncing: { name: '同步备份', area: 'writing' },
-  error: { name: '出错了', area: 'error' }
+  idle: { name: 'Idle', area: 'breakroom' },
+  writing: { name: 'Writing', area: 'writing' },
+  researching: { name: 'Researching', area: 'researching' },
+  executing: { name: 'Executing', area: 'writing' },
+  syncing: { name: 'Syncing', area: 'writing' },
+  error: { name: 'Error', area: 'error' }
 };
 
 const BUBBLE_TEXTS = {
   idle: [
-    '待命中：耳朵竖起来了',
-    '我在这儿，随时可以开工',
-    '先把桌面收拾干净再说',
-    '呼——给大脑放个风',
-    '今天也要优雅地高效',
-    '等待，是为了更准确的一击',
-    '咖啡还热，灵感也还在',
-    '我在后台给你加 Buff',
-    '状态：静心 / 充电',
-    '小猫说：慢一点也没关系'
+    'Standing by, ears up...',
+    'Ready when you are',
+    'Tidying up the workspace',
+    'Recharging my buffers',
+    'Calm before the next task',
+    'Coffee is hot, ideas are flowing',
+    'Buffing your experience in the background',
+    'Status: zen mode',
+    'The cat says: take your time',
+    'Waiting for the next message...'
   ],
   writing: [
-    '进入专注模式：勿扰',
-    '先把关键路径跑通',
-    '我来把复杂变简单',
-    '把 bug 关进笼子里',
-    '写到一半，先保存',
-    '把每一步都做成可回滚',
-    '今天的进度，明天的底气',
-    '先收敛，再发散',
-    '让系统变得更可解释',
-    '稳住，我们能赢'
+    'Focus mode: do not disturb',
+    'Drafting a response...',
+    'Turning complexity into clarity',
+    'Trapping bugs in a cage',
+    'Halfway through, saving progress',
+    'Making every step reversible',
+    "Today's progress, tomorrow's confidence",
+    'Converge first, then diverge',
+    'Making the system more explainable',
+    'Steady... we got this'
   ],
   researching: [
-    '我在挖证据链',
-    '让我把信息熬成结论',
-    '找到了：关键在这里',
-    '先把变量控制住',
-    '我在查：它为什么会这样',
-    '把直觉写成验证',
-    '先定位，再优化',
-    '别急，先画因果图'
+    'Digging through the evidence',
+    'Distilling info into conclusions',
+    'Found it: the key is right here',
+    'Controlling the variables first',
+    'Investigating: why does it do that?',
+    'Turning hunches into proofs',
+    'Locate first, optimize later',
+    'Drawing the causal graph...'
   ],
   executing: [
-    '执行中：不要眨眼',
-    '把任务切成小块逐个击破',
-    '开始跑 pipeline',
-    '一键推进：走你',
-    '让结果自己说话',
-    '先做最小可行，再做最美版本'
+    'Executing: don\'t blink',
+    'Breaking the task into small wins',
+    'Running the pipeline...',
+    'One-click deploy: here we go',
+    'Letting the results speak',
+    'Ship the MVP, polish later'
   ],
   syncing: [
-    '同步中：把今天锁进云里',
-    '备份不是仪式，是安全感',
-    '写入中…别断电',
-    '把变更交给时间戳',
-    '云端对齐：咔哒',
-    '同步完成前先别乱动',
-    '把未来的自己从灾难里救出来',
-    '多一份备份，少一份后悔'
+    'Syncing: locking today into the cloud',
+    'Backups aren\'t ritual, they\'re peace of mind',
+    'Writing to disk... don\'t pull the plug',
+    'Handing changes to the timestamps',
+    'Cloud aligned: click',
+    'Don\'t touch anything until sync is done',
+    'Saving future-me from disaster',
+    'One more backup, one less regret'
   ],
   error: [
-    '警报响了：先别慌',
-    '我闻到 bug 的味道了',
-    '先复现，再谈修复',
-    '把日志给我，我会说人话',
-    '错误不是敌人，是线索',
-    '把影响面圈起来',
-    '先止血，再手术',
-    '我在：马上定位根因',
-    '别怕，这种我见多了',
-    '报警中：让问题自己现形'
+    'Alert fired: stay calm',
+    'I smell a bug...',
+    'Reproduce first, then fix',
+    'Give me the logs, I\'ll translate',
+    'Errors aren\'t enemies, they\'re clues',
+    'Containing the blast radius',
+    'Stop the bleeding, then operate',
+    'On it: finding the root cause now',
+    'Don\'t panic, I\'ve seen this before',
+    'Alert mode: letting the problem reveal itself'
   ],
   cat: [
-    '喵~',
-    '咕噜咕噜…',
-    '尾巴摇一摇',
-    '晒太阳最开心',
-    '有人来看我啦',
-    '我是这个办公室的吉祥物',
-    '伸个懒腰',
-    '今天的罐罐准备好了吗',
-    '呼噜呼噜',
-    '这个位置视野最好'
+    'Meow~',
+    'Purr purr...',
+    'Tail goes swish swish',
+    'Sunbathing is the best',
+    'Oh! A visitor!',
+    'I\'m the office mascot',
+    'Big stretch...',
+    'Is today\'s treat ready?',
+    'Purrrrrr',
+    'Best seat in the house'
   ]
 };
 
@@ -263,7 +263,7 @@ async function initGame() {
     }
   }
 
-  console.log('WebP 支持:', supportsWebP);
+  console.log('WebP support:', supportsWebP);
   new Phaser.Game(config);
 }
 
@@ -361,7 +361,7 @@ function create() {
   const plaqueY = LAYOUT.plaque.y;
   const plaqueBg = game.add.rectangle(plaqueX, plaqueY, LAYOUT.plaque.width, LAYOUT.plaque.height, 0x5d4037);
   plaqueBg.setStrokeStyle(3, 0x3e2723);
-  const plaqueText = game.add.text(plaqueX, plaqueY, '海辛小龙虾的办公室', {
+  const plaqueText = game.add.text(plaqueX, plaqueY, 'Clawdi\'s Office', {
     fontFamily: 'ArkPixel, monospace',
     fontSize: '18px',
     fill: '#ffd700',
@@ -537,7 +537,7 @@ function create() {
   coordsToggle.addEventListener('click', () => {
     showCoords = !showCoords;
     coordsOverlay.style.display = showCoords ? 'block' : 'none';
-    coordsToggle.textContent = showCoords ? '隐藏坐标' : '显示坐标';
+    coordsToggle.textContent = showCoords ? 'Hide Coords' : 'Show Coords';
     coordsToggle.style.background = showCoords ? '#e94560' : '#333';
   });
 
@@ -552,38 +552,7 @@ function create() {
 
   loadMemo();
   fetchStatus();
-  // 先强制加一个测试用的尼卡 agent 渲染
-  const testNika = {
-    agentId: 'agent_nika',
-    name: '尼卡',
-    isMain: false,
-    state: 'writing',
-    detail: '在画像素画...',
-    area: 'writing',
-    authStatus: 'approved',
-    updated_at: new Date().toISOString()
-  };
-  renderAgent(testNika);
   fetchAgents();
-
-  // 测试用：让尼卡模拟走来走去
-  window.testNikaState = 'writing';
-  window.testNikaTimer = setInterval(() => {
-    const states = ['idle', 'writing', 'researching', 'executing'];
-    const areas = { idle: 'breakroom', writing: 'writing', researching: 'writing', executing: 'writing' };
-    window.testNikaState = states[Math.floor(Math.random() * states.length)];
-    const testAgent = {
-      agentId: 'agent_nika',
-      name: '尼卡',
-      isMain: false,
-      state: window.testNikaState,
-      detail: '在画像素画...',
-      area: areas[window.testNikaState],
-      authStatus: 'approved',
-      updated_at: new Date().toISOString()
-    };
-    renderAgent(testAgent);
-  }, 5000);
 }
 
 function update(time) {
@@ -752,7 +721,7 @@ function fetchStatus() {
       }
     })
     .catch(error => {
-      typewriterTarget = '连接失败，正在重试...';
+      typewriterTarget = 'Connection failed, retrying...';
       typewriterText = '';
       typewriterIndex = 0;
     });
@@ -867,7 +836,7 @@ function showBubble() {
 function showCatBubble() {
   if (!window.catSprite) return;
   if (window.catBubble) { window.catBubble.destroy(); window.catBubble = null; }
-  const texts = BUBBLE_TEXTS.cat || ['喵~', '咕噜咕噜…'];
+  const texts = BUBBLE_TEXTS.cat || ['Meow~', 'Purr purr...'];
   const text = texts[Math.floor(Math.random() * texts.length)];
   const anchorX = window.catSprite.x;
   const anchorY = window.catSprite.y - 60;
@@ -902,7 +871,7 @@ function fetchAgents() {
       }
     })
     .catch(error => {
-      console.error('拉取 agents 失败:', error);
+      console.error('Failed to fetch agents:', error);
     });
 }
 
