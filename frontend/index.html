@@ -3335,8 +3335,8 @@ function toggleBrokerPanel() {
                         // 统一使用动态像素角色，避免依赖已删除的 demo 静态图
                         const animKey = 'guest_anim_1';
                         const f = 0;
-                        sprite = game.add.sprite(p.x, p.y, animKey, f).setOrigin(0.5, 1).setScale(1.1);
-                        if (sprite.anims && sprite.anims.play) sprite.anims.play(animKey, true);
+                        sprite = game.add.sprite(p.x, p.y, animKey, f).setOrigin(0.5, 1).setScale(2.0);
+                        if (sprite.anims && sprite.anims.play) sprite.anims.play('guest_anim_1_idle', true);
                     } else {
                         // 非 demo 访客：优先用动画精灵（guest_anim_x），其次静态图，兜底星星
                         // 先确定角色索引（1-6）
@@ -3351,7 +3351,7 @@ function toggleBrokerPanel() {
                         const animIdleKey = `guest_anim_${animIdx}_idle`;
 
                         if (game.textures.exists(animKey) && game.anims.exists(animIdleKey)) {
-                            sprite = game.add.sprite(p.x, p.y, animKey).setOrigin(0.5, 1).setScale(4.0);
+                            sprite = game.add.sprite(p.x, p.y, animKey).setOrigin(0.5, 1).setScale(2.0);
                             sprite.anims.play(animIdleKey, true);
                         } else {
                             const staticAvatarKey = agent.avatar && game.textures.exists(agent.avatar)
@@ -3794,7 +3794,7 @@ function toggleBrokerPanel() {
 
             // Guest/Demo agent sprites
             for (let _gi = 1; _gi <= 10; _gi++) {
-                this.load.spritesheet(`guest_anim_${_gi}`, `/static/guest_anim_${_gi}.webp?v={{VERSION_TIMESTAMP}}`, { frameWidth: 32, frameHeight: 32 });
+                this.load.spritesheet(`guest_anim_${_gi}`, `/static/guest_anim_${_gi}.webp?v={{VERSION_TIMESTAMP}}`, { frameWidth: 64, frameHeight: 64 });
             }
         }
 
