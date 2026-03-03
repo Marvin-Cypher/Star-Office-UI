@@ -508,6 +508,11 @@ def main():
                 sf = find_session_file(sid, tid)
                 state, detail = get_topic_state(sf)
 
+                # Override: if main agent is active on THIS topic, mirror its state
+                if active_topic and name and active_topic == name and main_state != "idle":
+                    state = main_state
+                    detail = main_detail
+
                 avatar_idx = topic_info.get("avatar") if isinstance(topic_info, dict) else None
                 topic_agents.append({
                     "agentId": f"topic_{tid}",
