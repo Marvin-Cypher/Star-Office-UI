@@ -31,7 +31,8 @@ ASSET_ALLOWED_EXTS = {".png", ".webp", ".jpg", ".jpeg", ".gif", ".svg", ".avif"}
 ASSET_TEMPLATE_ZIP = os.path.join(ROOT_DIR, "assets-replace-template.zip")
 WORKSPACE_DIR = os.path.dirname(ROOT_DIR)
 GEMINI_SCRIPT = os.path.join(WORKSPACE_DIR, "skills", "gemini-image-generate", "scripts", "gemini_image_generate.py")
-GEMINI_PYTHON = os.path.join(WORKSPACE_DIR, "skills", "gemini-image-generate", ".venv", "bin", "python")
+GEMINI_PYTHON_VENV = os.path.join(WORKSPACE_DIR, "skills", "gemini-image-generate", ".venv", "bin", "python")
+GEMINI_PYTHON = GEMINI_PYTHON_VENV if os.path.exists(GEMINI_PYTHON_VENV) else shutil.which("python3") or "python3"
 ROOM_REFERENCE_IMAGE = (
     os.path.join(ROOT_DIR, "assets", "room-reference.webp")
     if os.path.exists(os.path.join(ROOT_DIR, "assets", "room-reference.webp"))
@@ -614,7 +615,7 @@ def _generate_rpg_background_to_webp(out_webp_path: str, width: int = 1280, heig
     ]
     theme = random.choice(themes)
 
-    if not (os.path.exists(GEMINI_PYTHON) and os.path.exists(GEMINI_SCRIPT)):
+    if not os.path.exists(GEMINI_SCRIPT):
         raise RuntimeError("生图脚本环境缺失：gemini-image-generate 未安装")
 
     style_hint = (custom_prompt or "").strip()
