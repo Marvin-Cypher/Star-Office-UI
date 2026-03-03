@@ -2710,7 +2710,7 @@ function toggleBrokerPanel() {
                 if (data && data.ok) {
                     window.geminiConfig = {
                         hasKey: !!data.has_api_key,
-                        model: data.gemini_model || 'nanobanana-pro'
+                        model: data.gemini_model || 'nano-banana-pro-preview'
                     };
                     const box = document.getElementById('asset-gemini-config');
                     if (box) box.style.display = 'block';
@@ -2736,7 +2736,7 @@ function toggleBrokerPanel() {
                 const res = await fetch('/config/gemini', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ api_key: key, model: 'nanobanana-pro' })
+                    body: JSON.stringify({ api_key: key, model: 'nano-banana-pro-preview' })
                 });
                 const data = await res.json();
                 if (!data.ok) {

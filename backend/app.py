@@ -377,7 +377,7 @@ def save_asset_defaults(data):
 def load_runtime_config():
     base = {
         "gemini_api_key": os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "",
-        "gemini_model": os.getenv("GEMINI_MODEL") or "nanobanana-pro"
+        "gemini_model": os.getenv("GEMINI_MODEL") or "nano-banana-pro-preview"
     }
     if os.path.exists(RUNTIME_CONFIG_FILE):
         try:
@@ -600,8 +600,8 @@ def _generate_rpg_background_to_webp(out_webp_path: str, width: int = 1280, heig
     """Generate RPG-style room background and save as webp.
 
     speed_mode:
-      - fast: use nanobanana-2 + 1024x576 intermediate + downscaled reference (faster)
-      - quality: use configured model (fallback nanobanana-pro) + full 1280x720 path
+      - fast: use gemini-3.1-flash-image-preview + 1024x576 intermediate + downscaled reference (faster)
+      - quality: use configured model (fallback nano-banana-pro-preview) + full 1280x720 path
     """
     runtime_cfg = load_runtime_config()
     api_key = (runtime_cfg.get("gemini_api_key") or "").strip()
@@ -633,7 +633,7 @@ def _generate_rpg_background_to_webp(out_webp_path: str, width: int = 1280, heig
 
     configured_model = (runtime_cfg.get("gemini_model") or "").strip() or "gemini-3.1-flash-image-preview"
     if mode == "fast":
-        selected_model = "nanobanana-2"
+        selected_model = "gemini-3.1-flash-image-preview"
         # fast 也提高基础清晰度：从 1024x576 提升到 1152x648（牺牲少量速度）
         gen_width, gen_height = 1152, 648
         ref_width, ref_height = 1152, 648
@@ -641,9 +641,6 @@ def _generate_rpg_background_to_webp(out_webp_path: str, width: int = 1280, heig
         selected_model = configured_model
         gen_width, gen_height = width, height
         ref_width, ref_height = width, height
-
-    if mode == "fast" and selected_model not in {"nanobanana-2", "nanobanana-pro"}:
-        selected_model = "nanobanana-2"
 
     prompt = (
         "Use a top-down pixel room composition compatible with an office game scene. "
@@ -1627,7 +1624,7 @@ def gemini_config_get():
             "ok": True,
             "has_api_key": bool(key),
             "api_key_masked": masked,
-            "gemini_model": cfg.get("gemini_model") or "nanobanana-pro",
+            "gemini_model": cfg.get("gemini_model") or "nano-banana-pro-preview",
         })
     except Exception as e:
         return jsonify({"ok": False, "msg": str(e)}), 500
@@ -1641,7 +1638,7 @@ def gemini_config_set():
     try:
         data = request.get_json(silent=True) or {}
         api_key = (data.get("api_key") or "").strip()
-        model = (data.get("model") or "").strip() or "nanobanana-pro"
+        model = (data.get("model") or "").strip() or "nano-banana-pro-preview"
         payload = {"gemini_model": model}
         if api_key:
             payload["gemini_api_key"] = api_key
