@@ -1,0 +1,11 @@
+{
+  "431347": {"name": "Personal Usage", "channel": "telegram", "show": true, "avatar": 1},
+  "435280": {"name": "Short Stock", "channel": "telegram", "show": true, "avatar": 2},
+  "433104": {"name": "Clawdi", "channel": "telegram", "show": true, "avatar": 3},
+  "431304": {"name": "CEO Daily", "channel": "telegram", "show": true, "avatar": 4},
+  "431298": {"name": "Sales", "channel": "telegram", "show": true, "avatar": 5},
+  "431308": {"name": "Marketing", "channel": "telegram", "show": true, "avatar": 6},
+  "431294": {"name": "Phala Metrics", "channel": "telegram", "show": true, "avatar": 1},
+  "434927": {"name": "ACDC", "channel": "telegram", "show": true, "avatar": 2},
+  "435316": {"name": "Bot Configure", "channel": "telegram", "show": true, "avatar": 3}
+}

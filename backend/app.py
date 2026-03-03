@@ -302,11 +302,11 @@ def invite_page():
 
 DEFAULT_AGENTS = [
     {
-        "agentId": "star",
-        "name": "Star",
+        "agentId": "clawdi",
+        "name": "Clawdi",
         "isMain": True,
         "state": "idle",
-        "detail": "待命中，随时准备为你服务",
+        "detail": "Ready and standing by",
         "updated_at": datetime.now().isoformat(),
         "area": "breakroom",
         "source": "local",

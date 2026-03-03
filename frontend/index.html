@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star 的像素办公室</title>
+    <title>Clawdi's Pixel Office</title>
     <style>
         @font-face {
             font-family: 'ArkPixel';
@@ -999,7 +999,7 @@
 <body>
     <!-- 加载遮罩 -->
     <div id="loading-overlay">
-        <div id="loading-text">Loading Star’s pixel office...</div>
+        <div id="loading-text">Loading Clawdi’s pixel office...</div>
         <div id="loading-progress-container">
             <div id="loading-progress-bar"></div>
         </div>
@@ -1159,7 +1159,7 @@
         let uiLang = localStorage.getItem('uiLang') || 'en';
         const I18N = {
             zh: {
-                controlTitle: 'Star 状态',
+                controlTitle: 'Clawdi Status',
                 btnIdle: '待命', btnWork: '工作', btnSync: '同步', btnError: '报警', btnDecor: '装修房间',
                 drawerTitle: '装修房间 · 资产侧边栏', drawerClose: '关闭',
                 authTitle: '请输入装修验证码', authPlaceholder: '输入验证码', authVerify: '验证', authDefaultPassHint: '默认密码：1234（可随时让我帮你改，建议改成强密码）',
@@ -1183,11 +1183,11 @@
                 assetHintNotInScene: '当前场景未检测到此对象，仍可替换文件（刷新后生效）',
                 assetHintDefault: '通用素材：建议保持原图尺寸、透明通道与视觉重心一致，避免错位或失真',
                 showCoords: '显示坐标', hideCoords: '隐藏坐标', moveView: '移动视野', lockView: '锁定视野',
-                memoTitle: '昨 日 小 记', guestTitle: '访 客 列 表', officeTitle: '海辛小龙虾的办公室',
-                loadingOffice: '正在加载 Star 的像素办公室...'
+                memoTitle: '昨 日 小 记', guestTitle: '访 客 列 表', officeTitle: "Clawdi's Office",
+                loadingOffice: "Loading Clawdi's pixel office..."
             },
             en: {
-                controlTitle: 'Star Status',
+                controlTitle: 'Clawdi Status',
                 btnIdle: 'Idle', btnWork: 'Work', btnSync: 'Sync', btnError: 'Alert', btnDecor: 'Decorate Room',
                 drawerTitle: 'Decorate Room · Asset Sidebar', drawerClose: 'Close',
                 authTitle: 'Enter Decor Passcode', authPlaceholder: 'Enter passcode', authVerify: 'Verify', authDefaultPassHint: 'Default passcode: 1234 (ask me anytime to change it; stronger passcode recommended)',
@@ -1211,11 +1211,11 @@
                 assetHintNotInScene: 'This object is not detected in current scene; you can still replace file (effective after refresh)',
                 assetHintDefault: 'Generic asset: keep source size, alpha channel, and visual anchor to avoid drift/distortion',
                 showCoords: 'Show Coords', hideCoords: 'Hide Coords', moveView: 'Pan View', lockView: 'Lock View',
-                memoTitle: 'YESTERDAY NOTES', guestTitle: 'VISITOR LIST', officeTitle: 'Haixin Lobster Office',
-                loadingOffice: 'Loading Star’s pixel office...'
+                memoTitle: ‘YESTERDAY NOTES’, guestTitle: ‘VISITOR LIST’, officeTitle: "Clawdi’s Office",
+                loadingOffice: "Loading Clawdi’s pixel office..."
             },
             ja: {
-                controlTitle: 'Star ステータス',
+                controlTitle: 'Clawdi ステータス',
                 btnIdle: '待機', btnWork: '作業', btnSync: '同期', btnError: '警報', btnDecor: '部屋を編集',
                 drawerTitle: '部屋編集・アセットサイドバー', drawerClose: '閉じる',
                 authTitle: '編集パスコードを入力', authPlaceholder: 'パスコード入力', authVerify: '認証', authDefaultPassHint: '初期パスコード：1234（いつでも変更を相談可。強固なパス推奨）',
@@ -1239,8 +1239,8 @@
                 assetHintNotInScene: '現在のシーンでこのオブジェクトは未検出です。ファイル差し替えは可能（更新後に反映）',
                 assetHintDefault: '汎用素材：元サイズ・透過・視覚アンカーを維持し、ズレや崩れを防いでください',
                 showCoords: '座標表示', hideCoords: '座標非表示', moveView: '視点移動', lockView: '視点固定',
-                memoTitle: '昨日のメモ', guestTitle: '訪問者リスト', officeTitle: 'ハイシン・ロブスターのオフィス',
-                loadingOffice: 'Star のピクセルオフィスを読み込み中...'
+                memoTitle: '昨日のメモ', guestTitle: '訪問者リスト', officeTitle: "Clawdi's Office",
+                loadingOffice: "Clawdi のピクセルオフィスを読み込み中..."
             }
         };
 
@@ -3278,27 +3278,33 @@ function toggleBrokerPanel() {
             return { x: randomInt(rect.x1, rect.x2), y: randomInt(rect.y1, rect.y2) };
         }
 
+        const IDLE_SPOTS = [
+            { x: 540, y: 310 },   // living room, near sofa left
+            { x: 720, y: 350 },   // living room, center
+            { x: 810, y: 290 },   // living room, near sofa right
+            { x: 600, y: 580 },   // living room floor, lower
+            { x: 750, y: 540 },   // center floor
+            { x: 1000, y: 500 },  // bedroom, near bed
+            { x: 1100, y: 580 },  // bedroom, foot of bed
+            { x: 1150, y: 420 },  // bedroom, by nightstand
+            { x: 950, y: 600 },   // bedroom floor
+        ];
         function getAreaPoint(area, idx) {
-            // 非 demo 访客：仍用固定点位，避免每次轮询都抖动。
-            const map = {
-                breakroom: [
-                    { x: 511, y: 262 },
-                    { x: 841, y: 621 },
-                    { x: 690, y: 470 }
-                ],
-                writing: [
-                    { x: 190, y: 526 },
-                    { x: 380, y: 683 },
-                    { x: 300, y: 610 }
-                ],
-                error: [
-                    { x: 932, y: 275 },
-                    { x: 1109, y: 327 },
-                    { x: 1020, y: 305 }
-                ]
+            if (area === 'breakroom' && idx < IDLE_SPOTS.length) {
+                return IDLE_SPOTS[idx];
+            }
+            // Fallback for writing/error areas or overflow
+            const rect = getAreaRect(area);
+            const cols = 3;
+            const padX = 20, padY = 20;
+            const col = idx % cols;
+            const row = Math.floor(idx / cols);
+            const gapX = cols > 1 ? (rect.x2 - rect.x1 - padX * 2) / (cols - 1) : 0;
+            const gapY = 60;
+            return {
+                x: Math.round(rect.x1 + padX + col * gapX),
+                y: Math.round(rect.y1 + padY + row * gapY)
             };
-            const arr = map[area] || map.breakroom;
-            return arr[idx % arr.length];
         }
 
         function renderGuestAgentsInScene() {
@@ -3334,9 +3340,7 @@ function toggleBrokerPanel() {
                     } else {
                         // 非 demo 访客：优先用动画精灵（guest_anim_x），其次静态图，兜底星星
                         // 先确定角色索引（1-6）
-                        let animIdx = agent.avatar
-                            ? parseInt((agent.avatar.match(/_(\d+)$/) || [])[1] || '0', 10)
-                            : 0;
+                        let animIdx = (typeof agent.avatar === 'number') ? agent.avatar : 0;
                         if (!animIdx || animIdx < 1 || animIdx > 6) {
                             const aid = String(agent.agentId || '');
                             let hash = 0;
@@ -3384,10 +3388,19 @@ function toggleBrokerPanel() {
                     }).setOrigin(0.5);
                     nameText.setDepth(2601);
 
-                    guestSprites[id] = { sprite, nameText };
+                    guestSprites[id] = { sprite, nameText, _lastArea: area };
                 } else {
                     const g = guestSprites[id];
                     const yOffset = (DEMO_MODE && (agent.agentId === 'demo_mercury' || agent.name === '水星')) ? 10 : 0;
+
+                    // Reposition when area changes (e.g. idle → working)
+                    if (!isDemo && g._lastArea !== area) {
+                        g.sprite.x = p.x;
+                        g.sprite.y = p.y + yOffset;
+                        g.nameText.x = p.x;
+                        g.nameText.y = (p.y + yOffset) - 120;
+                        g._lastArea = area;
+                    }
 
                     // demo：平滑移动（避免闪现）；非 demo：保持稳定位置（避免轮询抖动）
                     if (isDemo) {
