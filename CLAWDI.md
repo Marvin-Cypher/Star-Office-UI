@@ -134,9 +134,33 @@ sprite.anims.play('guest_anim_1_idle', true);  // upstream plays 'guest_anim_1' 
 Upstream uses 32x32 LimeZu sprites (6 characters). Our sprites are 64x64 (10 characters).
 Generator script: `/tmp/gen_marine_sprites.py` (PIL-based, zero external deps).
 
-### 5. `topic-bridge.py` — avatar cycle range
+### 5. `topic-bridge.py` — Clawdi-specific changes
+
+**a) Avatar cycle range**
 ```python
 avatar = (avatar % 10) + 1   # upstream equivalent cycles 1-6
+```
+
+**b) Raw log file parsing (bypasses `openclaw logs` CLI)**
+```python
+# Reads /tmp/openclaw/openclaw-YYYY-MM-DD.log directly instead of
+# subprocess.run(["openclaw", "logs", "--max-bytes", "12000"])
+# because the CLI output is flooded with config warnings.
+# Parses JSON lines, extracts "1" field for activity text.
+```
+
+**c) FUSE-compatible writes (no atomic rename)**
+```python
+# Direct writes instead of tmp→os.replace() which fails on FUSE
+with open(AGENTS_FILE, "w") as f:
+    json.dump(agents, f, ensure_ascii=False, indent=2)
+```
+
+**d) Active topic state propagation**
+```python
+# Mirrors main agent state onto the active topic character
+if active_topic and name and active_topic == name and main_state != "idle":
+    state = main_state
 ```
 
 ---
