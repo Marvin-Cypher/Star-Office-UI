@@ -971,7 +971,7 @@ def join_agent():
                 existing["lastPushAt"] = datetime.now().isoformat()  # join 视为上线，纳入并发/离线判定
                 if not existing.get("avatar"):
                     import random
-                    existing["avatar"] = random.choice(["guest_role_1", "guest_role_2", "guest_role_3", "guest_role_4", "guest_role_5", "guest_role_6"])
+                    existing["avatar"] = random.choice(["guest_role_1", "guest_role_2", "guest_role_3", "guest_role_4", "guest_role_5", "guest_role_6", "guest_role_7", "guest_role_8", "guest_role_9", "guest_role_10"])
                 agent_id = existing.get("agentId")
             else:
                 # Use ms + random suffix to avoid collisions under concurrent joins
@@ -992,7 +992,7 @@ def join_agent():
                     "authApprovedAt": datetime.now().isoformat(),
                     "authExpiresAt": (datetime.now() + timedelta(hours=24)).isoformat(),
                     "lastPushAt": datetime.now().isoformat(),
-                    "avatar": random.choice(["guest_role_1", "guest_role_2", "guest_role_3", "guest_role_4", "guest_role_5", "guest_role_6"])
+                    "avatar": random.choice(["guest_role_1", "guest_role_2", "guest_role_3", "guest_role_4", "guest_role_5", "guest_role_6", "guest_role_7", "guest_role_8", "guest_role_9", "guest_role_10"])
                 })
 
             key_item["used"] = True
