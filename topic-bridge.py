@@ -342,10 +342,8 @@ def load_agents():
 
 
 def save_agents(agents):
-    tmp = AGENTS_FILE + ".tmp"
-    with open(tmp, "w") as f:
+    with open(AGENTS_FILE, "w") as f:
         json.dump(agents, f, ensure_ascii=False, indent=2)
-    os.replace(tmp, AGENTS_FILE)
 
 
 def sync_agents(main_state, main_detail, topic_agents):
@@ -437,10 +435,8 @@ def write_main_state(state, detail):
         "progress": 0,
         "updated_at": datetime.now().isoformat(),
     }
-    tmp = STATE_FILE + ".tmp"
-    with open(tmp, "w") as f:
+    with open(STATE_FILE, "w") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    os.replace(tmp, STATE_FILE)
 
 
 # ── Main loop ───────────────────────────────────────────────────────────────
