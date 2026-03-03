@@ -253,25 +253,63 @@ def get_topic_state(session_file):
 
 
 # ── Main agent state (from gateway logs) ────────────────────────────────────
+def _read_recent_log_messages(max_lines=200):
+    """Read recent activity messages from the raw gateway log file.
+
+    The raw log at /tmp/openclaw/openclaw-YYYY-MM-DD.log is JSON-lines.
+    Each line has a "1" field with the human-readable message text.
+    We extract those, skipping config warnings (which lack a "1" field).
+    Returns a list of message strings (most recent last).
+    """
+    today = datetime.now().strftime("%Y-%m-%d")
+    log_path = f"/tmp/openclaw/openclaw-{today}.log"
+    if not os.path.exists(log_path):
+        return []
+
+    messages = []
+    try:
+        # Read last ~64KB to get recent entries without loading the whole file
+        with open(log_path, "rb") as f:
+            f.seek(0, 2)  # end
+            size = f.tell()
+            read_size = min(size, 65536)
+            f.seek(size - read_size)
+            chunk = f.read().decode("utf-8", errors="replace")
+
+        # If we seeked into the middle of a line, skip the partial first line
+        lines = chunk.split("\n")
+        if read_size < size:
+            lines = lines[1:]
+
+        for raw in lines[-max_lines:]:
+            raw = raw.strip()
+            if not raw:
+                continue
+            try:
+                obj = json.loads(raw)
+            except (json.JSONDecodeError, ValueError):
+                continue
+            # The activity text lives in the "1" field; config warnings only have "0"
+            msg = obj.get("1")
+            if msg and isinstance(msg, str):
+                messages.append(msg)
+    except Exception:
+        pass
+    return messages
+
+
 def get_main_state(session_topic_map=None):
     """Get main agent state from openclaw gateway logs.
-    
-    Also identifies which topic is active by matching sessionId from logs.
+
+    Reads the raw log file directly (bypasses `openclaw logs` CLI which is
+    flooded with config warnings). Parses JSON lines, extracts the "1" field.
     Returns (state, detail, active_topic_name_or_None).
     """
-    try:
-        r = subprocess.run(
-            ["openclaw", "logs", "--max-bytes", "12000"],
-            capture_output=True, text=True, timeout=5
-        )
-        logs = r.stdout if r.returncode == 0 else ""
-    except Exception:
-        logs = ""
+    messages = _read_recent_log_messages()
 
-    if not logs:
+    if not messages:
         return "idle", "Waiting...", None
 
-    lines = logs.strip().split("\n")
     total_active = 0
     last_channel = ""
     last_tool = ""
@@ -279,7 +317,7 @@ def get_main_state(session_topic_map=None):
     has_error = False
     has_cron = False
 
-    for line in lines:
+    for line in messages:
         m = re.search(r"totalActive=(\d+)", line)
         if m:
             total_active = int(m.group(1))
@@ -307,7 +345,7 @@ def get_main_state(session_topic_map=None):
         return "idle", "Waiting for messages...", None
     if has_cron and last_channel in ("", "cron"):
         return "syncing", "Running scheduled tasks...", None
-    
+
     # Active — include topic name in detail
     if last_tool:
         detail = f"[{active_topic}] Using {last_tool}" if active_topic else f"Using {last_tool}..."
