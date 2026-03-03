@@ -80,17 +80,13 @@ def discover_threads():
     return threads
 
 
-def build_session_topic_map(threads, topics_cfg):
-    """Build sessionId → topic name lookup."""
+def build_session_topic_map(threads):
+    """Build sessionId → threadId lookup for ALL threads."""
     mapping = {}
     for tid, meta in threads.items():
         sid = meta.get("sessionId", "")
-        if not sid:
-            continue
-        name_info = topics_cfg.get(tid, {})
-        name = name_info.get("name") if isinstance(name_info, dict) else name_info
-        if name:
-            mapping[sid] = name
+        if sid:
+            mapping[sid] = tid
     return mapping
 
 
@@ -321,6 +317,11 @@ def get_main_state(session_topic_map=None):
         m = re.search(r"totalActive=(\d+)", line)
         if m:
             total_active = int(m.group(1))
+        # Capture sessionId from "run registered" (has totalActive)
+        m = re.search(r"run registered: sessionId=(\S+)", line)
+        if m:
+            last_session_id = m.group(1)
+        # Capture sessionId + channel from "embedded run start" (more specific)
         m = re.search(r"embedded run start.*?sessionId=(\S+).*?messageChannel=(\S+)", line)
         if m:
             last_session_id = m.group(1)
@@ -333,23 +334,23 @@ def get_main_state(session_topic_map=None):
         if re.search(r"isError=true", line):
             has_error = True
 
-    # Resolve active topic name from sessionId
-    active_topic = None
+    # Resolve active thread ID from sessionId
+    active_thread = None
     if session_topic_map and last_session_id:
-        active_topic = session_topic_map.get(last_session_id)
+        active_thread = session_topic_map.get(last_session_id)
 
     if has_error and total_active == 0:
-        detail = f"Error in {active_topic}" if active_topic else "Something went wrong..."
-        return "error", detail, active_topic
+        detail = "Something went wrong..."
+        return "error", detail, active_thread
     if total_active == 0:
         return "idle", "Waiting for messages...", None
     if has_cron and last_channel in ("", "cron"):
         return "syncing", "Running scheduled tasks...", None
 
-    # Active — include topic name in detail
+    # Active
     if last_tool:
-        detail = f"[{active_topic}] Using {last_tool}" if active_topic else f"Using {last_tool}..."
-        return "executing", detail, active_topic
+        detail = f"Using {last_tool}..."
+        return "executing", detail, active_thread
 
     ch_map = {
         "telegram": "on Telegram",
@@ -357,13 +358,11 @@ def get_main_state(session_topic_map=None):
         "feishu": "on Feishu",
     }
     ch_label = ch_map.get(last_channel, "")
-    if active_topic:
-        detail = f"Working on {active_topic}"
-    elif ch_label:
+    if ch_label:
         detail = f"Chatting {ch_label}..."
     else:
         detail = "Thinking..."
-    return "writing", detail, active_topic
+    return "writing", detail, active_thread
 
 
 # ── Agents state management ─────────────────────────────────────────────────
@@ -498,17 +497,34 @@ def main():
             if cycle % 10 == 0:
                 topics_cfg = load_topics_config()
 
-            # 1. Build session→topic lookup
+            # 1. Build session→thread lookup (all threads, not just topics.json)
             threads = discover_threads()
-            session_topic_map = build_session_topic_map(threads, topics_cfg)
+            session_topic_map = build_session_topic_map(threads)
 
-            # 2. Main agent state from gateway logs (with topic identification)
-            main_state, main_detail, active_topic = get_main_state(session_topic_map)
-            main_key = (main_state, main_detail)
+            # 2. Main agent state from gateway logs (active_thread = threadId)
+            main_state, main_detail, active_thread = get_main_state(session_topic_map)
+            main_key = (main_state, main_detail, active_thread)
             if main_key != prev_main:
                 write_main_state(main_state, main_detail)
                 prev_main = main_key
-                print(f"[topic-bridge] Main → {main_state}: {main_detail}", flush=True)
+                thread_label = f" [thread:{active_thread}]" if active_thread else ""
+                print(f"[topic-bridge] Main → {main_state}: {main_detail}{thread_label}", flush=True)
+
+            # 2b. Fallback: if main is active but active_thread is not a
+            #     topic in our config, find the most recently updated topic
+            #     thread from sessions.json as a best-guess.
+            if main_state != "idle" and (not active_thread or active_thread not in topics_cfg):
+                best_tid = None
+                best_ts = 0
+                for tid_candidate, meta_candidate in threads.items():
+                    if tid_candidate not in topics_cfg:
+                        continue
+                    ts = meta_candidate.get("updatedAt", 0)
+                    if ts > best_ts:
+                        best_ts = ts
+                        best_tid = tid_candidate
+                if best_tid:
+                    active_thread = best_tid
 
             # 3. Build topic agent list
             topic_agents = []
@@ -542,10 +558,11 @@ def main():
                 sf = find_session_file(sid, tid)
                 state, detail = get_topic_state(sf)
 
-                # Override: if main agent is active on THIS topic, mirror its state
-                if active_topic and name and active_topic == name and main_state != "idle":
+                # Override: if main agent is active on THIS thread, mirror its state
+                if active_thread and active_thread == tid and main_state != "idle":
                     state = main_state
                     detail = main_detail
+                    print(f"[topic-bridge] Topic {name} (thread {tid}) → {state} (from main)", flush=True)
 
                 avatar_idx = topic_info.get("avatar") if isinstance(topic_info, dict) else None
                 topic_agents.append({
