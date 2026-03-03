@@ -32,7 +32,11 @@ ASSET_TEMPLATE_ZIP = os.path.join(ROOT_DIR, "assets-replace-template.zip")
 WORKSPACE_DIR = os.path.dirname(ROOT_DIR)
 GEMINI_SCRIPT = os.path.join(WORKSPACE_DIR, "skills", "gemini-image-generate", "scripts", "gemini_image_generate.py")
 GEMINI_PYTHON_VENV = os.path.join(WORKSPACE_DIR, "skills", "gemini-image-generate", ".venv", "bin", "python")
-GEMINI_PYTHON = GEMINI_PYTHON_VENV if os.path.exists(GEMINI_PYTHON_VENV) else shutil.which("python3") or "python3"
+try:
+    _venv_ok = os.path.isfile(GEMINI_PYTHON_VENV) and os.access(GEMINI_PYTHON_VENV, os.X_OK)
+except OSError:
+    _venv_ok = False
+GEMINI_PYTHON = GEMINI_PYTHON_VENV if _venv_ok else shutil.which("python3") or "python3"
 ROOM_REFERENCE_IMAGE = (
     os.path.join(ROOT_DIR, "assets", "room-reference.webp")
     if os.path.exists(os.path.join(ROOT_DIR, "assets", "room-reference.webp"))
