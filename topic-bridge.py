@@ -249,33 +249,22 @@ def get_topic_state(session_file):
 
 
 # ── Main agent state (from gateway logs) ────────────────────────────────────
-def _read_recent_log_messages(max_lines=200):
-    """Read recent activity messages from the raw gateway log file.
-
-    The raw log at /tmp/openclaw/openclaw-YYYY-MM-DD.log is JSON-lines.
-    Each line has a "1" field with the human-readable message text.
-    We extract those, skipping config warnings (which lack a "1" field).
-    Returns a list of message strings (most recent last).
-    """
-    today = datetime.now().strftime("%Y-%m-%d")
-    log_path = f"/tmp/openclaw/openclaw-{today}.log"
+def _read_log_tail(log_path, read_bytes=65536, max_lines=200):
+    """Read activity messages from the tail of a single log file."""
     if not os.path.exists(log_path):
         return []
-
     messages = []
     try:
-        # Read last ~64KB to get recent entries without loading the whole file
         with open(log_path, "rb") as f:
-            f.seek(0, 2)  # end
+            f.seek(0, 2)
             size = f.tell()
-            read_size = min(size, 65536)
+            read_size = min(size, read_bytes)
             f.seek(size - read_size)
             chunk = f.read().decode("utf-8", errors="replace")
 
-        # If we seeked into the middle of a line, skip the partial first line
         lines = chunk.split("\n")
         if read_size < size:
-            lines = lines[1:]
+            lines = lines[1:]  # skip partial first line
 
         for raw in lines[-max_lines:]:
             raw = raw.strip()
@@ -285,13 +274,42 @@ def _read_recent_log_messages(max_lines=200):
                 obj = json.loads(raw)
             except (json.JSONDecodeError, ValueError):
                 continue
-            # The activity text lives in the "1" field; config warnings only have "0"
             msg = obj.get("1")
             if msg and isinstance(msg, str):
                 messages.append(msg)
     except Exception:
         pass
     return messages
+
+
+def _read_recent_log_messages(max_lines=200):
+    """Read recent activity messages from the most recently modified gateway log.
+
+    The gateway log filename is based on gateway start date, NOT current date.
+    So we find the most recently modified openclaw-*.log file.
+    """
+    log_dir = "/tmp/openclaw"
+    if not os.path.isdir(log_dir):
+        return []
+
+    # Find most recently modified log file
+    best_path = None
+    best_mtime = 0
+    for fname in os.listdir(log_dir):
+        if fname.startswith("openclaw-") and fname.endswith(".log"):
+            fpath = os.path.join(log_dir, fname)
+            try:
+                mt = os.path.getmtime(fpath)
+                if mt > best_mtime:
+                    best_mtime = mt
+                    best_path = fpath
+            except OSError:
+                pass
+
+    if not best_path:
+        return []
+
+    return _read_log_tail(best_path, max_lines=max_lines)
 
 
 def get_main_state(session_topic_map=None):
