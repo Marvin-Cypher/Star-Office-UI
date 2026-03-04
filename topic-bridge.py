@@ -339,6 +339,10 @@ def get_main_state(session_topic_map=None):
         m = re.search(r"run registered: sessionId=(\S+)", line)
         if m:
             last_session_id = m.group(1)
+            # New run starting clears previous error/tool/cron state
+            has_error = False
+            last_tool = ""
+            has_cron = False
         # Capture sessionId + channel from "embedded run start" (more specific)
         m = re.search(r"embedded run start.*?sessionId=(\S+).*?messageChannel=(\S+)", line)
         if m:
