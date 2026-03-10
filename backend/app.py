@@ -35,7 +35,7 @@ except Exception:
 
 # Paths (project-relative, no hardcoded absolute paths)
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MEMORY_DIR = os.path.join(os.path.dirname(ROOT_DIR), "memory")
+MEMORY_DIR = os.environ.get("STAR_OFFICE_MEMORY_DIR") or os.path.join(os.path.dirname(ROOT_DIR), "memory")
 FRONTEND_DIR = os.path.join(ROOT_DIR, "frontend")
 FRONTEND_INDEX_FILE = os.path.join(FRONTEND_DIR, "index.html")
 FRONTEND_ELECTRON_STANDALONE_FILE = os.path.join(FRONTEND_DIR, "electron-standalone.html")
@@ -47,7 +47,12 @@ ASSET_ALLOWED_EXTS = {".png", ".webp", ".jpg", ".jpeg", ".gif", ".svg", ".avif"}
 ASSET_TEMPLATE_ZIP = os.path.join(ROOT_DIR, "assets-replace-template.zip")
 WORKSPACE_DIR = os.path.dirname(ROOT_DIR)
 GEMINI_SCRIPT = os.path.join(WORKSPACE_DIR, "skills", "gemini-image-generate", "scripts", "gemini_image_generate.py")
-GEMINI_PYTHON = os.path.join(WORKSPACE_DIR, "skills", "gemini-image-generate", ".venv", "bin", "python")
+GEMINI_PYTHON_VENV = os.path.join(WORKSPACE_DIR, "skills", "gemini-image-generate", ".venv", "bin", "python")
+try:
+    _venv_ok = os.path.isfile(GEMINI_PYTHON_VENV) and os.access(GEMINI_PYTHON_VENV, os.X_OK)
+except OSError:
+    _venv_ok = False
+GEMINI_PYTHON = GEMINI_PYTHON_VENV if _venv_ok else shutil.which("python3") or "python3"
 ROOM_REFERENCE_IMAGE = (
     os.path.join(ROOT_DIR, "assets", "room-reference.webp")
     if os.path.exists(os.path.join(ROOT_DIR, "assets", "room-reference.webp"))
@@ -288,11 +293,11 @@ def invite_page():
 
 DEFAULT_AGENTS = [
     {
-        "agentId": "star",
-        "name": "Star",
+        "agentId": "clawdi",
+        "name": "Clawdi",
         "isMain": True,
         "state": "idle",
-        "detail": "待命中，随时准备为你服务",
+        "detail": "Ready and standing by",
         "updated_at": datetime.now().isoformat(),
         "area": "breakroom",
         "source": "local",
@@ -621,7 +626,7 @@ def _generate_rpg_background_to_webp(out_webp_path: str, width: int = 1280, heig
     ]
     theme = random.choice(themes)
 
-    if not (os.path.exists(GEMINI_PYTHON) and os.path.exists(GEMINI_SCRIPT)):
+    if not os.path.exists(GEMINI_SCRIPT):
         raise RuntimeError("生图脚本环境缺失：gemini-image-generate 未安装")
 
     style_hint = (custom_prompt or "").strip()
@@ -1037,7 +1042,7 @@ def join_agent():
                 existing["lastPushAt"] = datetime.now().isoformat()  # join 视为上线，纳入并发/离线判定
                 if not existing.get("avatar"):
                     import random
-                    existing["avatar"] = random.choice(["guest_role_1", "guest_role_2", "guest_role_3", "guest_role_4", "guest_role_5", "guest_role_6"])
+                    existing["avatar"] = random.choice(["guest_role_1", "guest_role_2", "guest_role_3", "guest_role_4", "guest_role_5", "guest_role_6", "guest_role_7", "guest_role_8", "guest_role_9", "guest_role_10"])
                 agent_id = existing.get("agentId")
             else:
                 # Use ms + random suffix to avoid collisions under concurrent joins
@@ -1058,7 +1063,7 @@ def join_agent():
                     "authApprovedAt": datetime.now().isoformat(),
                     "authExpiresAt": (datetime.now() + timedelta(hours=24)).isoformat(),
                     "lastPushAt": datetime.now().isoformat(),
-                    "avatar": random.choice(["guest_role_1", "guest_role_2", "guest_role_3", "guest_role_4", "guest_role_5", "guest_role_6"])
+                    "avatar": random.choice(["guest_role_1", "guest_role_2", "guest_role_3", "guest_role_4", "guest_role_5", "guest_role_6", "guest_role_7", "guest_role_8", "guest_role_9", "guest_role_10"])
                 })
 
             key_item["used"] = True
@@ -1402,7 +1407,7 @@ def assets_generate_rpg_background():
         api_key = (runtime_cfg.get("gemini_api_key") or "").strip()
         if not api_key:
             return jsonify({"ok": False, "code": "MISSING_API_KEY", "msg": "Missing GEMINI_API_KEY or GOOGLE_API_KEY"}), 400
-        if not (os.path.exists(GEMINI_PYTHON) and os.path.exists(GEMINI_SCRIPT)):
+        if not os.path.exists(GEMINI_SCRIPT):
             return jsonify({"ok": False, "msg": "生图脚本环境缺失：gemini-image-generate 未安装"}), 500
 
         # Check if another generation is already running

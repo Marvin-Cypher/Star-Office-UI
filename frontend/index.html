@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star 的像素办公室</title>
+    <title>Clawdi's Pixel Office</title>
     <style>
         @font-face {
             font-family: 'ArkPixel';
@@ -1133,7 +1133,7 @@
 <body>
     <!-- 加载遮罩 -->
     <div id="loading-overlay">
-        <div id="loading-text">Loading Star’s pixel office...</div>
+        <div id="loading-text">Loading Clawdi's pixel office...</div>
         <div id="loading-progress-container">
             <div id="loading-progress-bar"></div>
         </div>
@@ -1317,11 +1317,11 @@
                 assetHintNotInScene: '当前场景未检测到此对象，仍可替换文件（刷新后生效）',
                 assetHintDefault: '通用素材：建议保持原图尺寸、透明通道与视觉重心一致，避免错位或失真',
                 showCoords: '显示坐标', hideCoords: '隐藏坐标', moveView: '移动视野', lockView: '锁定视野',
-                memoTitle: '昨 日 小 记', guestTitle: '访 客 列 表', officeTitle: '海辛小龙虾的办公室',
-                loadingOffice: '正在加载 Star 的像素办公室...'
+                memoTitle: '昨 日 小 记', guestTitle: '访 客 列 表', officeTitle: "Clawdi's Office",
+                loadingOffice: "Loading Clawdi's pixel office..."
             },
             en: {
-                controlTitle: 'Star Status',
+                controlTitle: 'Clawdi Status',
                 btnIdle: 'Idle', btnWork: 'Work', btnSync: 'Sync', btnError: 'Alert', btnDecor: 'Decorate Room',
                 drawerTitle: 'Decorate Room · Asset Sidebar', drawerClose: 'Close',
                 authTitle: 'Enter Decor Passcode', authPlaceholder: 'Enter passcode', authVerify: 'Verify', authDefaultPassHint: 'Default passcode: 1234 (ask me anytime to change it; stronger passcode recommended)',
@@ -1345,11 +1345,11 @@
                 assetHintNotInScene: 'This object is not detected in current scene; you can still replace file (effective after refresh)',
                 assetHintDefault: 'Generic asset: keep source size, alpha channel, and visual anchor to avoid drift/distortion',
                 showCoords: 'Show Coords', hideCoords: 'Hide Coords', moveView: 'Pan View', lockView: 'Lock View',
-                memoTitle: 'YESTERDAY NOTES', guestTitle: 'VISITOR LIST', officeTitle: 'Haixin Lobster Office',
-                loadingOffice: 'Loading Star’s pixel office...'
+                memoTitle: 'YESTERDAY NOTES', guestTitle: 'VISITOR LIST', officeTitle: "Clawdi's Office",
+                loadingOffice: "Loading Clawdi's pixel office..."
             },
             ja: {
-                controlTitle: 'Star ステータス',
+                controlTitle: 'Clawdi ステータス',
                 btnIdle: '待機', btnWork: '作業', btnSync: '同期', btnError: '警報', btnDecor: '部屋を編集',
                 drawerTitle: '部屋編集・アセットサイドバー', drawerClose: '閉じる',
                 authTitle: '編集パスコードを入力', authPlaceholder: 'パスコード入力', authVerify: '認証', authDefaultPassHint: '初期パスコード：1234（いつでも変更を相談可。強固なパス推奨）',
@@ -1373,8 +1373,8 @@
                 assetHintNotInScene: '現在のシーンでこのオブジェクトは未検出です。ファイル差し替えは可能（更新後に反映）',
                 assetHintDefault: '汎用素材：元サイズ・透過・視覚アンカーを維持し、ズレや崩れを防いでください',
                 showCoords: '座標表示', hideCoords: '座標非表示', moveView: '視点移動', lockView: '視点固定',
-                memoTitle: '昨日のメモ', guestTitle: '訪問者リスト', officeTitle: 'ハイシン・ロブスターのオフィス',
-                loadingOffice: 'Star のピクセルオフィスを読み込み中...'
+                memoTitle: '昨日のメモ', guestTitle: '訪問者リスト', officeTitle: "Clawdi's Office",
+                loadingOffice: "Clawdi のピクセルオフィスを読み込み中..."
             }
         };
 
@@ -1706,7 +1706,7 @@
         let guestAgents = [];
         let guestSprites = {}; // agentId -> {sprite, nameText}
         let guestBubbles = {}; // agentId -> bubble container
-        const GUEST_AVATARS = ['guest_role_1','guest_role_2','guest_role_3','guest_role_4','guest_role_5','guest_role_6'];
+        const GUEST_AVATARS = ['guest_role_1','guest_role_2','guest_role_3','guest_role_4','guest_role_5','guest_role_6','guest_role_7','guest_role_8','guest_role_9','guest_role_10'];
         let guestTweens = {};  // agentId -> {move, name}
         let hiddenDemoNames = new Set();
         const DEMO_MODE = new URLSearchParams(window.location.search).get('demo') === '1';
@@ -1822,7 +1822,11 @@
                     'guest_anim_3': '访客动画 3',
                     'guest_anim_4': '访客动画 4',
                     'guest_anim_5': '访客动画 5',
-                    'guest_anim_6': '访客动画 6'
+                    'guest_anim_6': '访客动画 6',
+                    'guest_anim_7': '访客动画 7',
+                    'guest_anim_8': '访客动画 8',
+                    'guest_anim_9': '访客动画 9',
+                    'guest_anim_10': '访客动画 10'
                 },
                 en: {
                     'star-idle-v5': 'Main · Idle',
@@ -1846,7 +1850,11 @@
                     'guest_anim_3': 'Guest Animation 3',
                     'guest_anim_4': 'Guest Animation 4',
                     'guest_anim_5': 'Guest Animation 5',
-                    'guest_anim_6': 'Guest Animation 6'
+                    'guest_anim_6': 'Guest Animation 6',
+                    'guest_anim_7': 'Guest Animation 7',
+                    'guest_anim_8': 'Guest Animation 8',
+                    'guest_anim_9': 'Guest Animation 9',
+                    'guest_anim_10': 'Guest Animation 10'
                 },
                 ja: {
                     'star-idle-v5': 'メイン・待機状態',
@@ -1870,7 +1878,11 @@
                     'guest_anim_3': '訪客アニメ 3',
                     'guest_anim_4': '訪客アニメ 4',
                     'guest_anim_5': '訪客アニメ 5',
-                    'guest_anim_6': '訪客アニメ 6'
+                    'guest_anim_6': '訪客アニメ 6',
+                    'guest_anim_7': '訪客アニメ 7',
+                    'guest_anim_8': '訪客アニメ 8',
+                    'guest_anim_9': '訪客アニメ 9',
+                    'guest_anim_10': '訪客アニメ 10'
                 }
             };
             const langMap = nameMap[lang] || nameMap.zh;
@@ -1898,12 +1910,16 @@
                 'coffee-machine-shadow-v1': '咖啡机阴影层。建议与咖啡机本体同宽对齐，增强贴地感。',
                 'serverroom-spritesheet': '服务器房动画表。保持 180×251 分帧，灯效变化建议节奏均匀不过闪。',
                 'flowers-bloom-v2': '花朵随机素材。保持 128×128 分帧，建议色彩与整体办公室主色协调。',
-                'guest_anim_1': '访客动画序列 1（32×32 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
-                'guest_anim_2': '访客动画序列 2（32×32 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
-                'guest_anim_3': '访客动画序列 3（32×32 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
-                'guest_anim_4': '访客动画序列 4（32×32 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
-                'guest_anim_5': '访客动画序列 5（32×32 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
-                'guest_anim_6': '访客动画序列 6（32×32 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
+                'guest_anim_1': '访客动画序列 1（64×64 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
+                'guest_anim_2': '访客动画序列 2（64×64 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
+                'guest_anim_3': '访客动画序列 3（64×64 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
+                'guest_anim_4': '访客动画序列 4（64×64 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
+                'guest_anim_5': '访客动画序列 5（64×64 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
+                'guest_anim_6': '访客动画序列 6（64×64 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
+                'guest_anim_7': '访客动画序列 7（64×64 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
+                'guest_anim_8': '访客动画序列 8（64×64 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
+                'guest_anim_9': '访客动画序列 9（64×64 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
+                'guest_anim_10': '访客动画序列 10（64×64 分帧）。建议保持像素风、轮廓清晰，与主角风格统一。',
                 'guest_role_1': '访客静态形象备用图 1。建议与对应 guest_anim 角色设定一致，避免切换割裂。',
                 'guest_role_2': '访客静态形象备用图 2。建议与对应 guest_anim 角色设定一致，避免切换割裂。',
                 'guest_role_3': '访客静态形象备用图 3。建议与对应 guest_anim 角色设定一致，避免切换割裂。',
@@ -1931,12 +1947,16 @@
                 'coffee-machine-shadow-v1': 'Coffee machine shadow layer. Align width/anchor with the machine body for grounded feel.',
                 'serverroom-spritesheet': 'Server-room animation sheet. Keep 180×251 frames; avoid over-flickering lights.',
                 'flowers-bloom-v2': 'Random flower sprites. Keep 128×128 frames; align palette with overall office mood.',
-                'guest_anim_1': 'Guest animation set 1 (32×32 frames). Keep pixel-art style/outline consistent with main cast.',
-                'guest_anim_2': 'Guest animation set 2 (32×32 frames). Keep pixel-art style/outline consistent with main cast.',
-                'guest_anim_3': 'Guest animation set 3 (32×32 frames). Keep pixel-art style/outline consistent with main cast.',
-                'guest_anim_4': 'Guest animation set 4 (32×32 frames). Keep pixel-art style/outline consistent with main cast.',
-                'guest_anim_5': 'Guest animation set 5 (32×32 frames). Keep pixel-art style/outline consistent with main cast.',
-                'guest_anim_6': 'Guest animation set 6 (32×32 frames). Keep pixel-art style/outline consistent with main cast.',
+                'guest_anim_1': 'Guest animation set 1 (64×64 frames). Keep pixel-art style/outline consistent with main cast.',
+                'guest_anim_2': 'Guest animation set 2 (64×64 frames). Keep pixel-art style/outline consistent with main cast.',
+                'guest_anim_3': 'Guest animation set 3 (64×64 frames). Keep pixel-art style/outline consistent with main cast.',
+                'guest_anim_4': 'Guest animation set 4 (64×64 frames). Keep pixel-art style/outline consistent with main cast.',
+                'guest_anim_5': 'Guest animation set 5 (64×64 frames). Keep pixel-art style/outline consistent with main cast.',
+                'guest_anim_6': 'Guest animation set 6 (64×64 frames). Keep pixel-art style/outline consistent with main cast.',
+                'guest_anim_7': 'Guest animation set 7 (64×64 frames). Keep pixel-art style/outline consistent with main cast.',
+                'guest_anim_8': 'Guest animation set 8 (64×64 frames). Keep pixel-art style/outline consistent with main cast.',
+                'guest_anim_9': 'Guest animation set 9 (64×64 frames). Keep pixel-art style/outline consistent with main cast.',
+                'guest_anim_10': 'Guest animation set 10 (64×64 frames). Keep pixel-art style/outline consistent with main cast.',
                 'guest_role_1': 'Fallback static guest avatar 1. Keep design aligned with corresponding guest_anim for smooth fallback.',
                 'guest_role_2': 'Fallback static guest avatar 2. Keep design aligned with corresponding guest_anim for smooth fallback.',
                 'guest_role_3': 'Fallback static guest avatar 3. Keep design aligned with corresponding guest_anim for smooth fallback.',
@@ -1964,12 +1984,16 @@
                 'coffee-machine-shadow-v1': 'コーヒーマシン影レイヤー。本体と幅・アンカーを揃えると接地感が出ます。',
                 'serverroom-spritesheet': 'サーバールームアニメ素材。180×251 分割を維持し、過度な点滅は避けてください。',
                 'flowers-bloom-v2': '花ランダム素材。128×128 分割を維持し、全体の色調と合わせると馴染みます。',
-                'guest_anim_1': '訪客アニメセット 1（32×32 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
-                'guest_anim_2': '訪客アニメセット 2（32×32 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
-                'guest_anim_3': '訪客アニメセット 3（32×32 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
-                'guest_anim_4': '訪客アニメセット 4（32×32 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
-                'guest_anim_5': '訪客アニメセット 5（32×32 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
-                'guest_anim_6': '訪客アニメセット 6（32×32 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
+                'guest_anim_1': '訪客アニメセット 1（64×64 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
+                'guest_anim_2': '訪客アニメセット 2（64×64 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
+                'guest_anim_3': '訪客アニメセット 3（64×64 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
+                'guest_anim_4': '訪客アニメセット 4（64×64 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
+                'guest_anim_5': '訪客アニメセット 5（64×64 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
+                'guest_anim_6': '訪客アニメセット 6（64×64 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
+                'guest_anim_7': '訪客アニメセット 7（64×64 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
+                'guest_anim_8': '訪客アニメセット 8（64×64 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
+                'guest_anim_9': '訪客アニメセット 9（64×64 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
+                'guest_anim_10': '訪客アニメセット 10（64×64 分割）。ピクセル感と輪郭太さを既存キャラに合わせてください。',
                 'guest_role_1': '訪客静止フォールバック画像 1。対応する guest_anim とデザインを揃えると切替時に自然です。',
                 'guest_role_2': '訪客静止フォールバック画像 2。対応する guest_anim とデザインを揃えると切替時に自然です。',
                 'guest_role_3': '訪客静止フォールバック画像 3。対応する guest_anim とデザインを揃えると切替時に自然です。',
@@ -3491,14 +3515,13 @@ function toggleBrokerPanel() {
             // 非 demo 访客：仍用固定点位，避免每次轮询都抖动。
             const map = {
                 breakroom: [
-                    { x: 511, y: 262 },
-                    { x: 841, y: 621 },
-                    { x: 690, y: 470 },
-                    { x: 600, y: 340 },
-                    { x: 770, y: 540 },
-                    { x: 550, y: 420 },
-                    { x: 720, y: 310 },
-                    { x: 650, y: 580 }
+                    { x: 540, y: 310 },   // living room, near sofa left
+                    { x: 720, y: 350 },   // living room, center
+                    { x: 810, y: 290 },   // living room, near sofa right
+                    { x: 630, y: 430 },   // living room, near desk
+                    { x: 900, y: 520 },   // bedroom, entry
+                    { x: 1150, y: 420 },  // bedroom, by nightstand
+                    { x: 950, y: 600 }    // bedroom floor
                 ],
                 writing: [
                     { x: 190, y: 526 },
@@ -3553,25 +3576,23 @@ function toggleBrokerPanel() {
                         // 统一使用动态像素角色，避免依赖已删除的 demo 静态图
                         const animKey = 'guest_anim_1';
                         const f = 0;
-                        sprite = game.add.sprite(p.x, p.y, animKey, f).setOrigin(0.5, 1).setScale(1.1);
-                        if (sprite.anims && sprite.anims.play) sprite.anims.play(animKey, true);
+                        sprite = game.add.sprite(p.x, p.y, animKey, f).setOrigin(0.5, 1).setScale(2.0);
+                        if (sprite.anims && sprite.anims.play) sprite.anims.play('guest_anim_1_idle', true);
                     } else {
                         // 非 demo 访客：优先用动画精灵（guest_anim_x），其次静态图，兜底星星
-                        // 先确定角色索引（1-6）
-                        let animIdx = agent.avatar
-                            ? parseInt((agent.avatar.match(/_(\d+)$/) || [])[1] || '0', 10)
-                            : 0;
-                        if (!animIdx || animIdx < 1 || animIdx > 6) {
+                        // 先确定角色索引（1-10）
+                        let animIdx = (typeof agent.avatar === 'number') ? agent.avatar : 0;
+                        if (!animIdx || animIdx < 1 || animIdx > 10) {
                             const aid = String(agent.agentId || '');
                             let hash = 0;
                             for (let i = 0; i < aid.length; i++) hash = (hash * 31 + aid.charCodeAt(i)) >>> 0;
-                            animIdx = (hash % 6) + 1;
+                            animIdx = (hash % 10) + 1;
                         }
                         const animKey = `guest_anim_${animIdx}`;
                         const animIdleKey = `guest_anim_${animIdx}_idle`;
 
                         if (game.textures.exists(animKey) && game.anims.exists(animIdleKey)) {
-                            sprite = game.add.sprite(p.x, p.y, animKey).setOrigin(0.5, 1).setScale(4.0);
+                            sprite = game.add.sprite(p.x, p.y, animKey).setOrigin(0.5, 1).setScale(2.0);
                             sprite.anims.play(animIdleKey, true);
                         } else {
                             const staticAvatarKey = agent.avatar && game.textures.exists(agent.avatar)
@@ -4015,13 +4036,10 @@ function toggleBrokerPanel() {
             // Flower spritesheet (65x65, 16 frames)
             this.load.spritesheet('flowers', '/static/flowers-bloom-v2.webp?v={{VERSION_TIMESTAMP}}', { frameWidth: FLOWERS_FRAME_W, frameHeight: FLOWERS_FRAME_H });
 
-            // Guest/Demo agent sprites
-            this.load.spritesheet('guest_anim_1', '/static/guest_anim_1.webp?v={{VERSION_TIMESTAMP}}', { frameWidth: 32, frameHeight: 32 });
-            this.load.spritesheet('guest_anim_2', '/static/guest_anim_2.webp?v={{VERSION_TIMESTAMP}}', { frameWidth: 32, frameHeight: 32 });
-            this.load.spritesheet('guest_anim_3', '/static/guest_anim_3.webp?v={{VERSION_TIMESTAMP}}', { frameWidth: 32, frameHeight: 32 });
-            this.load.spritesheet('guest_anim_4', '/static/guest_anim_4.webp?v={{VERSION_TIMESTAMP}}', { frameWidth: 32, frameHeight: 32 });
-            this.load.spritesheet('guest_anim_5', '/static/guest_anim_5.webp?v={{VERSION_TIMESTAMP}}', { frameWidth: 32, frameHeight: 32 });
-            this.load.spritesheet('guest_anim_6', '/static/guest_anim_6.webp?v={{VERSION_TIMESTAMP}}', { frameWidth: 32, frameHeight: 32 });
+            // Guest/Demo agent sprites (10 marine creature characters, 64x64 frames)
+            for (let _gi = 1; _gi <= 10; _gi++) {
+                this.load.spritesheet(`guest_anim_${_gi}`, `/static/guest_anim_${_gi}.webp?v={{VERSION_TIMESTAMP}}`, { frameWidth: 64, frameHeight: 64 });
+            }
         }
 
         function create() {
@@ -4056,8 +4074,8 @@ function toggleBrokerPanel() {
             });
 
 
-            // 创建 6 个访客角色的循环 idle 动画（8帧循环）
-            for (let i = 1; i <= 6; i++) {
+            // 创建 10 个访客角色的循环 idle 动画（8帧循环）
+            for (let i = 1; i <= 10; i++) {
                 this.anims.create({
                     key: `guest_anim_${i}_idle`,
                     frames: this.anims.generateFrameNumbers(`guest_anim_${i}`, { start: 0, end: 7 }),

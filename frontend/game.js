@@ -223,14 +223,13 @@ const NAME_TAG_COLORS = {
 // breakroom / writing / error 区域的 agent 分布位置（多 agent 时错开）
 const AREA_POSITIONS = {
   breakroom: [
-    { x: 620, y: 180 },
-    { x: 560, y: 220 },
-    { x: 680, y: 210 },
-    { x: 540, y: 170 },
-    { x: 700, y: 240 },
-    { x: 600, y: 250 },
-    { x: 650, y: 160 },
-    { x: 580, y: 200 }
+    { x: 540, y: 310 },   // living room, near sofa left
+    { x: 720, y: 350 },   // living room, center
+    { x: 810, y: 290 },   // living room, near sofa right
+    { x: 630, y: 430 },   // living room, near desk
+    { x: 900, y: 520 },   // bedroom, entry
+    { x: 1150, y: 420 },  // bedroom, by nightstand
+    { x: 950, y: 600 }    // bedroom floor
   ],
   writing: [
     { x: 760, y: 320 },
@@ -930,7 +929,8 @@ function fetchAgents() {
       for (let id in agents) {
         if (!currentIds.has(id)) {
           if (agents[id]) {
-            agents[id].destroy();
+            if (agents[id].sprite) agents[id].sprite.destroy();
+            if (agents[id].nameTag) agents[id].nameTag.destroy();
             delete agents[id];
           }
         }
@@ -959,74 +959,62 @@ function renderAgent(agent) {
   const baseX = pos.x;
   const baseY = pos.y;
 
-  // 颜色
-  const bodyColor = AGENT_COLORS[agentId] || AGENT_COLORS.default;
-  const nameColor = NAME_TAG_COLORS[authStatus] || NAME_TAG_COLORS.default;
-
   // 透明度（离线/待批准/拒绝时变半透明）
   let alpha = 1;
   if (authStatus === 'pending') alpha = 0.7;
   if (authStatus === 'rejected') alpha = 0.4;
   if (authStatus === 'offline') alpha = 0.5;
 
+  // 确定动画角色索引（1-10 marine creatures）
+  let animIdx = (typeof agent.avatar === 'number') ? agent.avatar : 0;
+  if (!animIdx || animIdx < 1 || animIdx > 10) {
+    const aid = String(agent.agentId || '');
+    let hash = 0;
+    for (let i = 0; i < aid.length; i++) hash = (hash * 31 + aid.charCodeAt(i)) >>> 0;
+    animIdx = (hash % 10) + 1;
+  }
+  const animKey = `guest_anim_${animIdx}`;
+  const animIdleKey = `${animKey}_idle`;
+
   if (!agents[agentId]) {
-    // 新建 agent
-    const container = game.add.container(baseX, baseY);
-    container.setDepth(1200 + (isMain ? 100 : 0)); // 放到最顶层！
+    // 新建 agent — 用动画精灵代替 emoji
+    let sprite;
+    if (game.textures.exists(animKey) && game.anims.exists(animIdleKey)) {
+      sprite = game.add.sprite(baseX, baseY, animKey).setOrigin(0.5, 1).setScale(2.0);
+      sprite.anims.play(animIdleKey, true);
+    } else {
+      // 兜底：用 emoji 星星
+      sprite = game.add.text(baseX, baseY, '⭐', {
+        fontFamily: 'ArkPixel, monospace', fontSize: '32px'
+      }).setOrigin(0.5, 1);
+    }
+    sprite.setDepth(1200 + (isMain ? 100 : 0));
+    sprite.setAlpha(alpha);
 
-    // 像素小人：用星星图标，更明显
-    const starIcon = game.add.text(0, 0, '⭐', {
+    // 名字标签
+    const nameTag = game.add.text(baseX, baseY - 120, name, {
       fontFamily: 'ArkPixel, monospace',
-      fontSize: '32px'
-    }).setOrigin(0.5);
-    starIcon.name = 'starIcon';
-
-    // 名字标签（漂浮）
-    const nameTag = game.add.text(0, -36, name, {
-      fontFamily: 'ArkPixel, monospace',
-      fontSize: '14px',
-      fill: '#' + nameColor.toString(16).padStart(6, '0'),
+      fontSize: '15px',
+      fill: '#fff',
       stroke: '#000',
-      strokeThickness: 3,
-      backgroundColor: 'rgba(255,255,255,0.95)'
+      strokeThickness: 3
     }).setOrigin(0.5);
-    nameTag.name = 'nameTag';
+    nameTag.setDepth(1201);
+    nameTag.setAlpha(alpha);
 
-    // 状态小点（绿色/黄色/红色）
-    let dotColor = 0x64748b;
-    if (authStatus === 'approved') dotColor = 0x22c55e;
-    if (authStatus === 'pending') dotColor = 0xf59e0b;
-    if (authStatus === 'rejected') dotColor = 0xef4444;
-    if (authStatus === 'offline') dotColor = 0x94a3b8;
-    const statusDot = game.add.circle(20, -20, 5, dotColor, alpha);
-    statusDot.setStrokeStyle(2, 0x000000, alpha);
-    statusDot.name = 'statusDot';
-
-    container.add([starIcon, statusDot, nameTag]);
-    agents[agentId] = container;
+    agents[agentId] = { sprite, nameTag, _lastArea: area };
   } else {
-    // 更新 agent
-    const container = agents[agentId];
-    container.setPosition(baseX, baseY);
-    container.setAlpha(alpha);
-    container.setDepth(1200 + (isMain ? 100 : 0));
-
-    // 更新名字和颜色（如果变化）
-    const nameTag = container.getAt(2);
-    if (nameTag && nameTag.name === 'nameTag') {
-      nameTag.setText(name);
-      nameTag.setFill('#' + (NAME_TAG_COLORS[authStatus] || NAME_TAG_COLORS.default).toString(16).padStart(6, '0'));
+    // 更新 agent — 只在区域变化时移动位置
+    const g = agents[agentId];
+    if (g._lastArea !== area) {
+      g.sprite.setPosition(baseX, baseY);
+      g.nameTag.setPosition(baseX, baseY - 120);
+      g._lastArea = area;
     }
-    // 更新状态点颜色
-    const statusDot = container.getAt(1);
-    if (statusDot && statusDot.name === 'statusDot') {
-      let dotColor = 0x64748b;
-      if (authStatus === 'approved') dotColor = 0x22c55e;
-      if (authStatus === 'pending') dotColor = 0xf59e0b;
-      if (authStatus === 'rejected') dotColor = 0xef4444;
-      if (authStatus === 'offline') dotColor = 0x94a3b8;
-      statusDot.fillColor = dotColor;
-    }
+    g.sprite.setAlpha(alpha);
+    g.nameTag.setAlpha(alpha);
+    // 更新名字
+    if (g.nameTag) g.nameTag.setText(name);
   }
 }
 
